@@ -18,7 +18,6 @@ npm install @freehour/i18n
 Each locale is defined in an I18nGlossary structure. Below is an example using a JSON format:
 
 ```json
-// en-US.json
 {
     "$version": "1.0.0", // optional
     "$locale": "en-US",
@@ -65,7 +64,6 @@ console.log(result); // Outputs: "Hello!"
 You can nest translations using dot notation:
 
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -76,7 +74,6 @@ You can nest translations using dot notation:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'user.greeting');
 console.log(result); // Outputs: "Hello!"
 ```
@@ -86,7 +83,6 @@ console.log(result); // Outputs: "Hello!"
 You can use parameterized templates for dynamic translations:
 
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -97,7 +93,6 @@ You can use parameterized templates for dynamic translations:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'greeting', {
     name: 'John',
     date: '2025-01-01'
@@ -108,7 +103,6 @@ console.log(result); // Outputs: "Hello John, today is 2025-01-01!"
 #### Default Parameters
 You can define default values for parameters in the glossary:
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -124,7 +118,6 @@ You can define default values for parameters in the glossary:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'greeting');
 console.log(result); // Outputs: "Hello Guest!"
 ```
@@ -134,7 +127,6 @@ console.log(result); // Outputs: "Hello Guest!"
 You can use the [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) API for formatting parameter values:
 
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -153,7 +145,6 @@ You can use the [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'greeting', {
     name: 'John',
     date: new Date('2025-01-01')
@@ -165,16 +156,12 @@ console.log(result); // Outputs: "Hello John, today is Wednesday, January 1, 202
 #### Alias Formats
 You can use aliases for parameters to apply different formats to the same value:
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
         "greeting": {
             "$template": "Hello {name}, today is {date} ({shortDate})!",
             "$params": {
-                "name": {
-                    "$alias": "userName"
-                },
                 "date": {
                     "$format": "date-time",
                     "$options": {
@@ -194,7 +181,6 @@ You can use aliases for parameters to apply different formats to the same value:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'greeting', {
     userName: 'John',
     date: new Date('2025-01-01')
@@ -217,7 +203,6 @@ The following formats are supported:
 You can format lists using the `list` format:
 
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -237,7 +222,6 @@ You can format lists using the `list` format:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'items', {
     items: ['apple', 'banana', 'cherry']
 });
@@ -247,7 +231,6 @@ console.log(result); // Outputs: "Items: apple, banana, and cherry"
 #### Number Formatting
 You can format numbers using the `number` format:
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -267,7 +250,6 @@ You can format numbers using the `number` format:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'price', {
     price: 19.99
 });
@@ -277,7 +259,6 @@ console.log(result); // Outputs: "Price: $19.99"
 #### Plural Formatting
 You can format numbers with plural rules using the `plural` format:
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -304,7 +285,6 @@ You can format numbers with plural rules using the `plural` format:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'notificationCount', {
     count: 5
 });
@@ -319,7 +299,6 @@ console.log(result); // Outputs: "You have 1 notification"
 #### Relative Time Formatting
 You can format relative times using the `relative-time` format:
 ```json
-// en-US.json
 {
     "$locale": "en-US",
     "$translations": {
@@ -339,7 +318,6 @@ You can format relative times using the `relative-time` format:
 }
 ```
 ```typescript
-// index.ts
 const {result} = translate(glossary, 'lastLogin', { value: -1, unit: 'day' });
 console.log(result); // Outputs: "You last logged in yesterday"
 ```

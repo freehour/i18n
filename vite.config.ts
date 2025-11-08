@@ -14,7 +14,7 @@ export default defineConfig({
         tsConfigPaths(),
         dtsPlugin({
             entryRoot: 'lib',
-            include: ['lib/index.ts', 'lib/i18n.ts', 'lib/models/i18n.ts'],
+            include: ['lib/'],
             staticImport: true,
             tsconfigPath: './tsconfig.lib.json',
         }),
