@@ -34,7 +34,7 @@ describe('translate()', () => {
             name: ['John', 'Jane'],
             date: new Date('2025-01-01'),
         });
-        expect(result).toBe('Hello John or Jane, today is Wednesday, January 1, 2025!');
+        expect(result).toBe('Hello John or Jane, today is Wednesday, January 1, 2025 (1/1/25)!');
     });
 
     it('handles plural and number formatting', () => {
@@ -61,7 +61,7 @@ describe('translate()', () => {
         const { result } = translate(glossary, 'user.lastLogin', {
             lastLogin: { value: -1, unit: 'day' },
         });
-        expect(result).toMatch(/You last logged in (?:yesterday|1 day ago)\./i);
+        expect(result).toBe('You last logged in yesterday.');
     });
 
     it('returns unknown-key issue for invalid key', () => {

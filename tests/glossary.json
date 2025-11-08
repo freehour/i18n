@@ -7,7 +7,7 @@
         },
         "user": {
             "greeting": {
-                "$template": "Hello {name}, today is {date}!",
+                "$template": "Hello {name}, today is {date} ({shortDate})!",
                 "$params": {
                     "name": {
                         "$default": "Guest",
@@ -20,6 +20,13 @@
                         "$format": "date-time",
                         "$options": {
                             "dateStyle": "full"
+                        }
+                    },
+                    "shortDate": {
+                        "$alias": "date",
+                        "$format": "date-time",
+                        "$options": {
+                            "dateStyle": "short"
                         }
                     }
                 }
