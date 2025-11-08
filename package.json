@@ -9,7 +9,7 @@
         "url": "git+https://github.com/freehour/i18n.git"
     },
     "scripts": {
-        "lint": "eslint . --ext ts",
+        "lint": "eslint ./lib --ext ts",
         "build": "bun run lint && tsc && vite build"
     },
     "files": [

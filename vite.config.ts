@@ -14,7 +14,7 @@ export default defineConfig({
         tsConfigPaths(),
         dtsPlugin({
             entryRoot: 'lib',
-            include: ['lib/'],
+            include: ['lib/index.ts', 'lib/i18n.ts', 'lib/models/i18n.ts'],
             staticImport: true,
             tsconfigPath: './tsconfig.lib.json',
         }),
@@ -32,10 +32,8 @@ export default defineConfig({
             external: id => dependencies.some(dep => id.startsWith(dep)),
             output: {
                 globals: Object.fromEntries(dependencies.map(dep => [dep, dep])),
-                preserveModules: true,
                 preserveModulesRoot: 'lib',
             },
         },
-        sourcemap: true,
     },
 });
