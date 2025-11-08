@@ -1,4 +1,5 @@
-import type { ZodError, ZodSafeParseError, ZodSafeParseSuccess } from 'zod';
+import type { ZodSafeParseError, ZodSafeParseSuccess } from 'zod';
+import { prettifyError } from 'zod';
 
 import type { I18nGlossary } from './models/i18n';
 import { I18nTemplate, I18nTemplateParam } from './models/i18n';
@@ -98,17 +99,6 @@ export interface I18nUnkownKey extends I18nBaseIssue {
     type: 'unknown-key';
 }
 
-export interface I18nInvalidFormat extends I18nBaseIssue {
-    /**
-     * The value for a template parameter does not match the expected format.
-     */
-    type: 'invalid-format';
-    error: ZodError;
-    param: string;
-    value: any;
-}
-
-
 export interface I18nMissingParam extends I18nBaseIssue {
     /**
      * A required template parameter was not provided in the arguments.
@@ -117,7 +107,17 @@ export interface I18nMissingParam extends I18nBaseIssue {
     param: string;
 }
 
-export type I18Issue = I18nUnkownKey | I18nInvalidFormat | I18nMissingParam;
+export interface I18nInvalidFormat extends I18nBaseIssue {
+    /**
+     * The value for a template parameter does not match the expected format.
+     */
+    type: 'invalid-format';
+    param: string;
+    value: any;
+    error: string;
+}
+
+export type I18Issue = I18nUnkownKey | I18nMissingParam | I18nInvalidFormat;
 
 export interface I18nResult {
     result: string;
@@ -190,7 +190,7 @@ export function translate(
                 key,
                 param,
             });
-            return param;
+            return match;
         }
 
         // format the value based on the format options
@@ -201,11 +201,11 @@ export function translate(
                 errors.push({
                     type: 'invalid-format',
                     key,
-                    error: formattedValue.error,
                     param,
                     value,
+                    error: prettifyError(formattedValue.error),
                 });
-                return String(value);
+                return match;
             }
             return formattedValue.data;
         }

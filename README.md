@@ -56,8 +56,8 @@ const glossary = I18nGlossary.parse(glossaryJson);
 ```typescript
 import { translate } from '@freehour/i18n';
 
-const greeting = translate(glossary, 'greeting');
-console.log(greeting); // Outputs: "Hello!"
+const {result} = translate(glossary, 'greeting');
+console.log(result); // Outputs: "Hello!"
 ```
 
 ### 📜 Translation Keys
@@ -77,8 +77,8 @@ You can nest translations using dot notation:
 ```
 ```typescript
 // index.ts
-const greeting = translate(glossary, 'user.greeting');
-console.log(greeting); // Outputs: "Hello!"
+const {result} = translate(glossary, 'user.greeting');
+console.log(result); // Outputs: "Hello!"
 ```
 
 ### 🧩 Parameterized Templates
@@ -98,11 +98,11 @@ You can use parameterized templates for dynamic translations:
 ```
 ```typescript
 // index.ts
-const greeting = translate(glossary, 'greeting', {
+const {result} = translate(glossary, 'greeting', {
     name: 'John',
     date: '2025-01-01'
 });
-console.log(greeting); // Outputs: "Hello John, today is 2025-01-01!"
+console.log(result); // Outputs: "Hello John, today is 2025-01-01!"
 ```
 
 #### Default Parameters
@@ -125,8 +125,8 @@ You can define default values for parameters in the glossary:
 ```
 ```typescript
 // index.ts
-const greeting = translate(glossary, 'greeting');
-console.log(greeting); // Outputs: "Hello Guest!"
+const {result} = translate(glossary, 'greeting');
+console.log(result); // Outputs: "Hello Guest!"
 ```
 
 ### 📊 Formatting
@@ -154,11 +154,11 @@ You can use the [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 ```
 ```typescript
 // index.ts
-const greeting = translate(glossary, 'greeting', {
+const {result} = translate(glossary, 'greeting', {
     name: 'John',
     date: new Date('2025-01-01')
 });
-console.log(greeting); // Outputs: "Hello John, today is Wednesday, January 1, 2025!"
+console.log(result); // Outputs: "Hello John, today is Wednesday, January 1, 2025!"
 ```
 
 
@@ -195,11 +195,11 @@ You can use aliases for parameters to apply different formats to the same value:
 ```
 ```typescript
 // index.ts
-const greeting = translate(glossary, 'greeting', {
+const {result} = translate(glossary, 'greeting', {
     userName: 'John',
     date: new Date('2025-01-01')
 });
-console.log(greeting); // Outputs: "Hello John, today is Wednesday, January 1, 2025 (1/1/25)!"
+console.log(result); // Outputs: "Hello John, today is Wednesday, January 1, 2025 (1/1/25)!"
 ```
 
 #### Formats
@@ -238,10 +238,10 @@ You can format lists using the `list` format:
 ```
 ```typescript
 // index.ts
-const items = translate(glossary, 'items', {
+const {result} = translate(glossary, 'items', {
     items: ['apple', 'banana', 'cherry']
 });
-console.log(items); // Outputs: "Items: apple, banana, and cherry"
+console.log(result); // Outputs: "Items: apple, banana, and cherry"
 ```
 
 #### Number Formatting
@@ -268,10 +268,10 @@ You can format numbers using the `number` format:
 ```
 ```typescript
 // index.ts
-const price = translate(glossary, 'price', {
+const {result} = translate(glossary, 'price', {
     price: 19.99
 });
-console.log(price); // Outputs: "Price: $19.99"
+console.log(result); // Outputs: "Price: $19.99"
 ```
 
 #### Plural Formatting
@@ -305,15 +305,15 @@ You can format numbers with plural rules using the `plural` format:
 ```
 ```typescript
 // index.ts
-const notifications = translate(glossary, 'notificationCount', {
+const {result} = translate(glossary, 'notificationCount', {
     count: 5
 });
-console.log(notifications); // Outputs: "You have 5 notifications"
+console.log(result); // Outputs: "You have 5 notifications"
 
-const notifications = translate(glossary, 'notificationCount', {
+const {result} = translate(glossary, 'notificationCount', {
     count: 1
 });
-console.log(notifications); // Outputs: "You have 1 notification"
+console.log(result); // Outputs: "You have 1 notification"
 ```
 
 #### Relative Time Formatting
@@ -340,8 +340,50 @@ You can format relative times using the `relative-time` format:
 ```
 ```typescript
 // index.ts
-const lastLogin = translate(glossary, 'lastLogin', { value: -1, unit: 'day' });
-console.log(lastLogin); // Outputs: "You last logged in yesterday"
+const {result} = translate(glossary, 'lastLogin', { value: -1, unit: 'day' });
+console.log(result); // Outputs: "You last logged in yesterday"
 ```
 
 For more details on the available options for each format, refer to the [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl).
+
+
+### 🚨 Error Handling
+If a translation key is not found, the result includes an issue object with the type `unknown-key`.
+The result will be the translation key itself.
+
+```typescript
+const result = translate(glossary, 'non.existent.key');
+console.log(result);
+// Outputs: {
+//      result: 'non.existent.key',
+//      issues: [{ type: 'unknown-key', key: 'non.existent.key' }]
+// }
+```
+
+If a template is missing a required parameter, the result includes an issue object with the type `missing-param`.
+Missing parameters will not be replaced in the result.
+
+```typescript
+const result = translate(glossary, 'greeting', { name: 'John' });
+console.log(result);
+// Outputs: {
+//      result: 'Hello John, today is {date}!',
+//      issues: [{ type: 'missing-param', key: 'greeting', param: 'date' }]
+// }
+```
+
+If a parameter value does not match the expected format, the result includes an issue object with the type `invalid-format`.
+```typescript
+const result = translate(glossary, 'greeting', { name: 'John', date: 'invalid-date' });
+console.log(result);
+// Outputs: {
+//      result: 'Hello John, today is {date}!',
+//      issues: [{
+//          type: 'invalid-format',
+//          key: 'greeting',
+//          param: 'date',
+//          value: 'invalid-date',
+//          error: '✖ Invalid input: expected number or date'
+//      }]
+// }
+```

@@ -70,16 +70,26 @@ describe('translate()', () => {
         expect(issues?.[0]).toEqual(
             expect.objectContaining({ type: 'unknown-key' }),
         );
+        console.log(issues);
     });
 
     it('returns missing-param issue for templates missing required parameters', () => {
         const result = translate(glossary, 'user.notifications', {});
         expect(result.issues?.some(i => i.type === 'missing-param')).toBe(true);
+        console.log(result);
     });
 
     it('returns invalid-format issue for wrong parameter type', () => {
         const result = translate(glossary, 'user.balance', { amount: 'not a number' });
         const invalid = result.issues?.find(i => i.type === 'invalid-format');
         expect(invalid?.param).toBe('amount');
+        console.log(result);
+    });
+
+    it('returns multiple issues for different problems', () => {
+        const result = translate(glossary, 'user.greeting', { date: 'invalid-date' });
+        expect(result.issues?.length).toBeGreaterThanOrEqual(2);
+        expect(result.issues?.some(i => i.type === 'invalid-format')).toBe(true);
+        console.log(result);
     });
 });

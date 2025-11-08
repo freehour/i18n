@@ -16,8 +16,8 @@ export type IntlPluralRule = z.infer<typeof IntlPluralRule>;
 
 export const IntlDateTimeFormat = z.union([
     z.number(),
-    z.instanceof(Date),
-]);
+    z.date(),
+], 'Invalid input: expected number or date');
 export type IntlDateTimeFormat = z.infer<typeof IntlDateTimeFormat>;
 
 
@@ -28,7 +28,7 @@ export type IntlListFormat = z.infer<typeof IntlListFormat>;
 export const IntlNumberFormat = z.union([
     z.coerce.number(),
     z.enum(['Infinity', '-Infinity', '+Infinity']),
-]);
+], 'Invalid input: exepcted number, or one of (Infinity, -Infinity, +Infinity)');
 export type IntlNumberFormat = z.infer<typeof IntlNumberFormat>;
 
 
