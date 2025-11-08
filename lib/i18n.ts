@@ -1,10 +1,10 @@
 import type { ZodError, ZodSafeParseError, ZodSafeParseSuccess } from 'zod';
 
 import type { I18nGlossary } from './models/i18n';
-import { I18nTranslationParameter, I18nTranslationTemplate } from './models/i18n';
+import { I18nTemplate, I18nTemplateParam } from './models/i18n';
 import type { IntlFormatOptions } from './models/intl';
 import { IntlDateTimeFormat, IntlListFormat, IntlNumberFormat, IntlPluralRules, IntlRelativeTimeFormat } from './models/intl';
-import { i18nTranslationParamKeys } from './models/regex';
+import { i18nTemplateParams } from './models/regex';
 import { getDeepValue } from './utils/deep-value';
 import { isString } from './utils/is-type';
 
@@ -12,17 +12,14 @@ import { isString } from './utils/is-type';
 function formatValue(
     locale: Intl.Locale,
     value: any,
-    {
-        $format,
-        $options,
-    }: IntlFormatOptions,
+    intl: IntlFormatOptions,
 ): ZodSafeParseSuccess<string> | ZodSafeParseError<any> {
-    if ($format === 'date-time') {
+    if (intl.$format === 'date-time') {
         const { success, data, error } = IntlDateTimeFormat.safeParse(value);
         return success
             ? {
                 success,
-                data: new Intl.DateTimeFormat(locale, $options).format(data),
+                data: new Intl.DateTimeFormat(locale, intl.$options).format(data),
             }
             : {
                 success,
@@ -34,12 +31,12 @@ function formatValue(
     // if ($format === 'duration') {
     // }
 
-    if ($format === 'list') {
+    if (intl.$format === 'list') {
         const { success, data, error } = IntlListFormat.safeParse(value);
         return success
             ? {
                 success,
-                data: new Intl.ListFormat(locale, $options).format(data),
+                data: new Intl.ListFormat(locale, intl.$options).format(data),
             }
             : {
                 success,
@@ -47,12 +44,12 @@ function formatValue(
             };
     }
 
-    if ($format === 'number') {
+    if (intl.$format === 'number') {
         const { success, data, error } = IntlNumberFormat.safeParse(value);
         return success
             ? {
                 success,
-                data: new Intl.NumberFormat(locale, $options).format(data),
+                data: new Intl.NumberFormat(locale, intl.$options).format(data),
             }
             : {
                 success,
@@ -60,24 +57,27 @@ function formatValue(
             };
     }
 
-    if ($format === 'plural') {
+    if (intl.$format === 'plural') {
         const { success, data, error } = IntlPluralRules.safeParse(value);
-        return success
-            ? {
-                success,
-                data: new Intl.PluralRules(locale, $options).select(data),
-            }
-            : {
+        if (!success) {
+            return {
                 success,
                 error,
             };
+        }
+
+        const rule = new Intl.PluralRules(locale, intl.$options).select(data);
+        return {
+            success,
+            data: intl.$plural?.[rule] ?? rule,
+        };
     }
 
     const { success, data, error } = IntlRelativeTimeFormat.safeParse(value);
     return success
         ? {
             success,
-            data: new Intl.RelativeTimeFormat(locale, $options).format(data.value, data.unit),
+            data: new Intl.RelativeTimeFormat(locale, intl.$options).format(data.value, data.unit),
         }
         : {
             success,
@@ -160,7 +160,7 @@ export function translate(
         };
     }
 
-    const { success, data } = I18nTranslationTemplate.safeParse(translation);
+    const { success, data } = I18nTemplate.safeParse(translation);
     if (!success) {
         return {
             result: key,
@@ -175,14 +175,12 @@ export function translate(
 
     const { $template, $params } = data;
     const errors: I18Issue[] = [];
-    const result = $template.replace(i18nTranslationParamKeys, (match, param) => {
+    const result = $template.replace(i18nTemplateParams, (match, param) => {
 
-        // check if the parameter is defined
-        const paramDef = getDeepValue($params, param);
-        const p = I18nTranslationParameter.parse(paramDef ?? {});
+        const p = I18nTemplateParam.parse($params?.[param] ?? {});
 
         // get the value from args for the parameter, or default value if any
-        const value = getDeepValue(args, param);
+        const value = args[p.$alias ?? param];
         if (value === undefined) {
             if (p.$default !== undefined) {
                 return p.$default;

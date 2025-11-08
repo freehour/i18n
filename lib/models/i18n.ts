@@ -1,9 +1,7 @@
 import z from 'zod';
 
-import { getDeepValue } from '@/utils/deep-value';
-
 import { IntlFormatOptions } from './intl';
-import { i18nIdentifier, i18nTranslationParamKey, i18nTranslationParamKeys } from './regex';
+import { i18nIdentifier, i18nKey, i18nTemplateParam } from './regex';
 
 /**
  * A semantic version string.
@@ -41,61 +39,42 @@ export const I18nIdentifier = z.stringFormat(
 export type I18nIdentifier = z.infer<typeof I18nIdentifier>;
 
 
-export const I18nTranslationParamKey = z.stringFormat(
-    'i18n-translation-param-key',
-    new RegExp(`^${i18nTranslationParamKey}$`),
+export const I18nKey = z.stringFormat(
+    'i18n-key',
+    new RegExp(`^${i18nKey}$`),
 );
-export type I18nTranslationParamKey = z.infer<typeof I18nTranslationParamKey>;
+export type I18nKey = z.infer<typeof I18nKey>;
 
 
-const I18nTranslationParameterDefault = z.object({
+export const I18nParamToken = z.stringFormat(
+    'i18n-param-tokem',
+    new RegExp(`^${i18nTemplateParam}$`),
+);
+export type I18nParamToken = z.infer<typeof I18nParamToken>;
+
+
+const I18nTemplateParamBase = z.object({
+    $alias: I18nKey.optional(),
     $default: z.string().optional(),
 });
-export const I18nTranslationParameter = z.union([
-    I18nTranslationParameterDefault.and(z.object({ $format: z.undefined().optional() })),
-    I18nTranslationParameterDefault.and(IntlFormatOptions),
+export const I18nTemplateParam = z.union([
+    I18nTemplateParamBase.and(z.object({ $format: z.undefined().optional() })),
+    I18nTemplateParamBase.and(IntlFormatOptions),
 ]);
-export type I18nTranslationParameter = z.infer<typeof I18nTranslationParameter>;
+export type I18nTemplateParam = z.infer<typeof I18nTemplateParam>;
 
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type I18nTranslationParams = {
-    [key: I18nIdentifier]: I18nTranslationParameter | I18nTranslationParams;
-};
-export const I18nTranslationParams: z.ZodType<I18nTranslationParams> = z.record(
-    I18nIdentifier,
-    z.union([
-        I18nTranslationParameter,
-        z.lazy(() => I18nTranslationParams),
-    ]),
-);
-
-
-export const I18nTranslationTemplate = z.object({
+export const I18nTemplate = z.object({
     $template: z.string(),
-    $params: I18nTranslationParams,
-}).superRefine(({ $template, $params }, ctx) => {
-    const matches = $template.matchAll(i18nTranslationParamKeys);
-    matches.forEach(match => {
-        const [, key] = match;
-        const param = getDeepValue($params, key);
-        const { success } = I18nTranslationParameter.safeParse(param);
-        if (!success) {
-            ctx.addIssue({
-                code: 'custom',
-                message: `Unkown template parameter: ${key}`,
-                input: $template,
-            });
-        }
-    });
+    $params: z.record(I18nIdentifier, I18nTemplateParam).optional(),
 });
-export type I18nTranslationTemplate = z.infer<typeof I18nTranslationTemplate>;
+export type I18nTemplate = z.infer<typeof I18nTemplate>;
 
 
 export const I18nTranslation = z.union(
     [
         z.string(),
-        I18nTranslationTemplate,
+        I18nTemplate,
     ],
 );
 export type I18nTranslation = z.infer<typeof I18nTranslation>;

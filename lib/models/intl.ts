@@ -1,26 +1,17 @@
 import z from 'zod';
 
 
-export const IntlFormat = z.enum([
-    'date-time',
-    // 'duration', // Not yet included in TypeScript https://github.com/microsoft/TypeScript/issues/60608
-    'list',
-    'number',
-    'plural',
-    'relative-time',
-]);
-export type IntlFormat = z.infer<typeof IntlFormat>;
-
-
-export const IntlFormatOptions = z.discriminatedUnion('$format', [
-    z.object({ $format: z.literal('date-time'), $options: z.custom<Intl.DateTimeFormatOptions>().optional() }),
-    // z.object({ $format: z.literal('duration'), $options: z.custom<Intl.DurationFormatOptions>().optional() }), // Not yet included in TypeScript https://github.com/microsoft/TypeScript/issues/60608
-    z.object({ $format: z.literal('list'), $options: z.custom<Intl.ListFormatOptions>().optional() }),
-    z.object({ $format: z.literal('number'), $options: z.custom<Intl.NumberFormatOptions>().optional() }),
-    z.object({ $format: z.literal('plural'), $options: z.custom<Intl.PluralRulesOptions>().optional() }),
-    z.object({ $format: z.literal('relative-time'), $options: z.custom<Intl.RelativeTimeFormatOptions>().optional() }),
-]);
-export type IntlFormatOptions = z.infer<typeof IntlFormatOptions>;
+export const IntlPluralRule = z
+    .enum([
+        'zero',
+        'one',
+        'two',
+        'few',
+        'many',
+        'other',
+    ])
+    .pipe(z.custom<Intl.LDMLPluralRule>());
+export type IntlPluralRule = z.infer<typeof IntlPluralRule>;
 
 
 export const IntlDateTimeFormat = z.union([
@@ -67,3 +58,26 @@ export const IntlRelativeTimeFormat = z.object({
     ]),
 });
 export type IntlRelativeTimeFormat = z.infer<typeof IntlRelativeTimeFormat>;
+
+
+export const IntlFormat = z.enum([
+    'date-time',
+    // 'duration', // Not yet included in TypeScript https://github.com/microsoft/TypeScript/issues/60608
+    'list',
+    'number',
+    'plural',
+    'relative-time',
+]);
+export type IntlFormat = z.infer<typeof IntlFormat>;
+
+
+export const IntlFormatOptions = z.discriminatedUnion('$format', [
+    z.object({ $format: z.literal('date-time'), $options: z.custom<Intl.DateTimeFormatOptions>().optional() }),
+    // z.object({ $format: z.literal('duration'), $options: z.custom<Intl.DurationFormatOptions>().optional() }), // Not yet included in TypeScript https://github.com/microsoft/TypeScript/issues/60608
+    z.object({ $format: z.literal('list'), $options: z.custom<Intl.ListFormatOptions>().optional() }),
+    z.object({ $format: z.literal('number'), $options: z.custom<Intl.NumberFormatOptions>().optional() }),
+    z.object({ $format: z.literal('plural'), $options: z.custom<Intl.PluralRulesOptions>().optional(), $plural: z.partialRecord(IntlPluralRule, z.string()).optional() }),
+    z.object({ $format: z.literal('relative-time'), $options: z.custom<Intl.RelativeTimeFormatOptions>().optional() }),
+]);
+export type IntlFormatOptions = z.infer<typeof IntlFormatOptions>;
+

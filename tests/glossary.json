@@ -1,0 +1,134 @@
+{
+    "$version": "1.0.0",
+    "$locale": "en-US",
+    "$translations": {
+        "app": {
+            "title": "Welcome to our application"
+        },
+        "user": {
+            "greeting": {
+                "$template": "Hello {name}, today is {date}!",
+                "$params": {
+                    "name": {
+                        "$default": "Guest",
+                        "$format": "list",
+                        "$options": {
+                            "type": "disjunction"
+                        }
+                    },
+                    "date": {
+                        "$format": "date-time",
+                        "$options": {
+                            "dateStyle": "full"
+                        }
+                    }
+                }
+            },
+            "notifications": {
+                "$template": "You have {count} {notifications}.",
+                "$params": {
+                    "count": {
+                        "$format": "number"
+                    },
+                    "notifications": {
+                        "$alias": "count",
+                        "$format": "plural",
+                        "$options": {
+                            "type": "cardinal"
+                        },
+                        "$plural": {
+                            "one": "notification",
+                            "other": "notifications"
+                        }
+                    }
+                }
+            },
+            "balance": {
+                "$template": "Your current balance is {amount}.",
+                "$params": {
+                    "amount": {
+                        "$format": "number",
+                        "$options": {
+                            "style": "currency",
+                            "currency": "USD"
+                        }
+                    }
+                }
+            },
+            "friends": {
+                "$template": "You have {friends} in your list.",
+                "$params": {
+                    "friends": {
+                        "$format": "list",
+                        "$options": {
+                            "style": "long",
+                            "type": "conjunction"
+                        }
+                    }
+                }
+            },
+            "lastLogin": {
+                "$template": "You last logged in {lastLogin}.",
+                "$params": {
+                    "lastLogin": {
+                        "$format": "relative-time",
+                        "$options": {
+                            "numeric": "auto",
+                            "style": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "product": {
+            "price": {
+                "$template": "This item costs {price}.",
+                "$params": {
+                    "price": {
+                        "$format": "number",
+                        "$options": {
+                            "style": "currency",
+                            "currency": "USD",
+                            "minimumFractionDigits": 2
+                        }
+                    }
+                }
+            },
+            "releaseDate": {
+                "$template": "Released on {releaseDate}.",
+                "$params": {
+                    "releaseDate": {
+                        "$format": "date-time",
+                        "$options": {
+                            "dateStyle": "medium"
+                        }
+                    }
+                }
+            }
+        },
+        "list": {
+            "examples": {
+                "$template": "Available items: {items}.",
+                "$params": {
+                    "items": {
+                        "$format": "list",
+                        "$options": {
+                            "type": "disjunction"
+                        }
+                    }
+                }
+            }
+        },
+        "nested": {
+            "simple": "A plain string translation",
+            "templateWithDefault": {
+                "$template": "Hello {user}, welcome back!",
+                "$params": {
+                    "user": {
+                        "$default": "User"
+                    }
+                }
+            }
+        }
+    }
+}
