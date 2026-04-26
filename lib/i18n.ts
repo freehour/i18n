@@ -29,7 +29,7 @@ function formatValue(
     }
 
     // not yet included in TypeScript
-    // if ($format === 'duration') {
+    // if (intl.$format === 'duration') {
     // }
 
     if (intl.$format === 'list') {
@@ -93,6 +93,7 @@ export interface I18nBaseIssue {
 }
 
 export interface I18nUnkownKey extends I18nBaseIssue {
+
     /**
      * The key was not found in the glossary or does not point to a valid translation.
      */
@@ -100,18 +101,22 @@ export interface I18nUnkownKey extends I18nBaseIssue {
 }
 
 export interface I18nMissingParam extends I18nBaseIssue {
+
     /**
      * A required template parameter was not provided in the arguments.
      */
     type: 'missing-param';
+
     param: string;
 }
 
 export interface I18nInvalidFormat extends I18nBaseIssue {
+
     /**
      * The value for a template parameter does not match the expected format.
      */
     type: 'invalid-format';
+
     param: string;
     value: any;
     error: string;

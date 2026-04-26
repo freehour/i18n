@@ -4,7 +4,7 @@ import { prettifyError, treeifyError } from 'zod';
 import { translate } from '../lib/i18n';
 import { I18nGlossary } from '../lib/models/i18n';
 
-import glossaryJson from './glossary.json' assert { type: 'json' };
+import glossaryJson from './glossary.json' with { type: 'json' };
 
 
 const parsed = I18nGlossary.safeParse(glossaryJson);

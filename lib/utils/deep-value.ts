@@ -8,13 +8,13 @@ import { isObject } from './is-type';
  * @template S - The separator used in the path (default is '.').
  */
 export type DeepValue<T, P extends string, S extends string = '.'> =
-  P extends `${infer Key}${S}${infer Rest}`
-      ? Key extends keyof T
-          ? DeepValue<T[Key], Rest, S>
-          : never
-      : P extends keyof T
-          ? T[P]
-          : never;
+    P extends `${infer Key}${S}${infer Rest}`
+        ? Key extends keyof T
+            ? DeepValue<T[Key], Rest, S>
+            : never
+        : P extends keyof T
+            ? T[P]
+            : never;
 
 
 /**

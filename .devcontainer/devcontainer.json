@@ -5,12 +5,6 @@
         "ghcr.io/devcontainers/features/sshd": {},
         "ghcr.io/devcontainers/features/git": {}
     },
-    "secrets": {
-        "NPM_PKG_GITHUB_TOKEN": {
-            "description": "GitHub token for publishing and installing private npm packages"
-        }
-    },
-    "runArgs": ["--env-file", ".devcontainer/.env"],
     "containerUser": "bun",
     "remoteUser": "bun",
     "postCreateCommand": "bun install",
@@ -42,6 +36,7 @@
                     "source.organizeImports": "never"
                 },
                 "terminal.integrated.defaultProfile.linux": "bash",
+                "eslint.useFlatConfig": true,
 
                 "material-icon-theme.files.customClones": [
                     {
