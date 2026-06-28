@@ -11,9 +11,6 @@
     "lib": [
       "ESNext"
     ],
-    "types": [
-      "bun-types"
-    ],
     "resolveJsonModule": true,
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
